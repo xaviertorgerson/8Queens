@@ -1,6 +1,11 @@
-import java.util.Arrays;
+import java.util.*;
+import java.io.*;
 
 public class FriendsCoupon{
+
+	public static int[][] friends;
+	public static int numberOfCoupons;
+	public static int numberOfUsers;
 
 	/**
 	*Checks if the given partial solution is complete
@@ -86,10 +91,32 @@ public class FriendsCoupon{
 	public static void main(String[] args){
        	
 		if(args.length == 2) {
-	        System.out.println(args[0]);
+	        
+			System.out.println(args[0]);
+	        System.out.println(args[1]);
+			
+			File inFile = new File(args[0]);
+			Scanner in = new Scanner(System.in);
+			try {
+				in = new Scanner(inFile);
+			} catch (FileNotFoundException exception) {
+				System.out.println("File not found");
+			}
+			
+			friends = new int[1000][1000];	
+			int i;	
+			for(i = 0; in.hasNextLine(); i++) {
+				String line = in.nextLine();
+				Scanner lineScanner = new Scanner(line);
+				for(int j = 0; lineScanner.hasNextInt(); j++) {
+					friends[i][j] = lineScanner.nextInt(); 
+				}
+			}
+			
+			numberOfUsers = i;
 		}
 		else {
-			System.out.println("Error");
+			System.out.println("Error missing args");
 		}
 	}
 	
