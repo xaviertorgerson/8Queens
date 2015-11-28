@@ -8,28 +8,37 @@ public class FriendsCoupon{
 	public static int numberOfUsers;
 
 	/**
-	 *Checks if the given partial solution is complete
-	 *@param partial Partial solution
-	 *@return True if partial is a complete, valid solution
-	 */
+	*Checks if the given partial solution is complete
+	*@param partial Partial solution
+	*@return True if partial is a complete, valid solution
+	*/
 	public static boolean isFullSolution(int[] partial){
-
-		return false;
+		for (int i = friends[0].length-1; i >=0; i--){
+			if (partial[i]==0){
+				return false;
+			}
+		}
+		
+		if (reject(partial)){
+			return false;
+		}
+		
+		return true;
 	}
-
+	
 	/**
-	 *Checks if partial solution can become a complete solution
-	 *@param partial Partial solution
-	 *@return True if partial solution can NOT be extended to a complete solution
-	 */
+	*Checks if partial solution can become a complete solution
+	*@param partial Partial solution
+	*@return True if partial solution can NOT be extended to a complete solution
+	*/
 	public static boolean reject(int[] partial){
 		int i = 0;
 		while(i<friends[0].length){
 			if (partial[i+1] == 0){
 				
 				boolean goodCoupon = false;
-
-				for(int testCoupon = 1; !goodCoupon; testCoupon++) 
+				int testCoupon;
+				for(testCoupon = 1; !goodCoupon && testCoupon <= numberOfCoupons; testCoupon++) 
 				{
 					goodCoupon = true;
 					//Check all friends of i and their 
@@ -42,21 +51,25 @@ public class FriendsCoupon{
 						}
 					}
 				}
+					if(!goodCoupon) {
+						return false;
+					}
+				
+				partial[i] = testCoupon;
+				return false; 
 			}
 		}
-		
-
 		return false;
 	}
-
+	
 	/**
-	 **Takes in a partial solution and includes an additional step.
-	 **@param partial Partial solution
-	 *	*@return A partial solution with additional step, or null if no step can be added
-	 * */
+	*Takes in a partial solution and includes an additional step.
+	*@param partial Partial solution
+	*@return A partial solution with additional step, or null if no step can be added
+	*/
 	public static int[] extend(int[] partial){
 		int[] temp = new int[friends[0].length];
-		for (int i=0; i<friends[0].length-1; i++){
+		for (int i=0; i<numberOfUsers; i++){
 			if (partial[i] == 0){
 				temp[i] = 1;
 				return temp;
@@ -67,23 +80,25 @@ public class FriendsCoupon{
 		}
 		return null;
 	}
-
+	
 	/**
-	 **The most recent step to be added has been changed to its next option
-	 **@param partial Partial solution
-	 **@return A partial solution with the most recent step to be added has been changed to its next option
-	 **/
+	*The most recent step to be added has been changed to its next option
+	*@param partial Partial solution
+	*@return A partial solution with the most recent step to be added has been changed to its next option
+	*/
 	public static int[] next(int[] partial){
 		int i = 0;
-		while(i<friends[0].length){
+		while(i<numberOfUsers){
 			if (partial[i+1] == 0){
 				partial[i]= partial[i] + 1;
-				i = friends[0].length;
+				return partial;
 			}
 			i++;
 		}
 		return partial;
+		
 	}
+	
 	
 	/**
 	*Tests isFullSolution method using several partial solutions.
@@ -119,7 +134,17 @@ public class FriendsCoupon{
 	*@param partial The partial solution
 	*/
 	public static void solve(int[] partial){
-	
+        if (reject(partial)) {
+            System.out.println("Whoops");
+            return;
+        }
+        if (isFullSolution(partial))
+            System.out.println(Arrays.toString(partial));
+        int[] attempt = extend(partial);
+        while (attempt != null) {
+            solve(attempt);
+            attempt = next(attempt);
+        }
 	}
 	
 	/**
@@ -128,6 +153,9 @@ public class FriendsCoupon{
 	public static void main(String[] args){
        	
 		if(args.length == 2) {
+	        
+			System.out.println(args[0]);
+	        System.out.println(args[1]);
 			
 			File inFile = new File(args[0]);
 			Scanner in = new Scanner(System.in);
@@ -148,6 +176,12 @@ public class FriendsCoupon{
 			}
 			
 			numberOfUsers = i;
+			
+			int[] attempt = new int[numberOfUsers];
+			attempt[0] = 1;
+			
+			solve(attempt);
+			
 		}
 		else {
 			System.out.println("Error missing args");
